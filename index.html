@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Week Grid</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;background:#f6f7f9;color:#111}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 6px}
+h1{font-size:20px;margin:0}
+button{font:inherit;font-size:14px;padding:6px 12px;border:1px solid #ccc;border-radius:8px;background:#fff}
+.wrap{overflow-x:auto;padding:8px 14px 20px}
+table{border-collapse:collapse;min-width:840px;width:100%;background:#fff}
+th,td{border:1px solid #d5d8dd;vertical-align:top}
+th{background:#eef0f3;padding:8px 4px;font-size:14px}
+th.today{background:#d6e6ff}
+td.lab{position:sticky;left:0;background:#eef0f3;font-weight:600;text-align:center;padding:8px;width:48px}
+input[type=time]{width:100%;border:0;border-bottom:1px solid #e3e5e9;padding:6px;font:inherit;font-size:15px;background:transparent}
+textarea{width:100%;min-height:80px;border:0;resize:vertical;padding:6px;font:inherit;font-size:15px;background:transparent}
+textarea:focus,input:focus{outline:2px solid #6aa0ff}
+</style></head><body>
+<header><h1>Week Grid</h1><button id="clr">Clear all</button></header>
+<div class="wrap"><table><thead><tr id="hd"><th></th></tr></thead><tbody id="bd"></tbody></table></div>
+<script>
+const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const K="weekgrid-v1";let d=JSON.parse(localStorage.getItem(K)||"{}");
+const save=()=>localStorage.setItem(K,JSON.stringify(d));
+const today=(new Date().getDay()+6)%7;
+const hd=document.getElementById("hd"),bd=document.getElementById("bd");
+days.forEach((n,i)=>{const th=document.createElement("th");th.textContent=n;if(i===today)th.className="today";hd.appendChild(th)});
+["AM","PM"].forEach(p=>{const tr=document.createElement("tr");const l=document.createElement("td");l.className="lab";l.textContent=p;tr.appendChild(l);
+days.forEach(n=>{const td=document.createElement("td");
+const tm=document.createElement("input");tm.type="time";const tk=n+"-"+p+"-time";tm.value=d[tk]||"";tm.oninput=()=>{d[tk]=tm.value;save()};td.appendChild(tm);
+const t=document.createElement("textarea");const k=n+"-"+p;t.value=d[k]||"";t.placeholder="Add name";t.oninput=()=>{d[k]=t.value;save()};td.appendChild(t);
+tr.appendChild(td)});bd.appendChild(tr)});
+document.getElementById("clr").onclick=()=>{if(confirm("Clear everything?")){d={};localStorage.removeItem(K);document.querySelectorAll("textarea,input").forEach(t=>t.value="")}};
+</script></body></html>
